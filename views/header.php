@@ -48,7 +48,6 @@
 						<div class="user_info row">
 							<div class="col-xs-4">
 								<div class="user_profile" style="background-image: url('<?=$_SESSION['user_profile_image']?>');"></div>
-
 							</div>
 							<div class="col-xs-8 user_name">
 								<span><strong><?=$_SESSION['user_name']?></strong></span><br>

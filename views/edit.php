@@ -28,7 +28,7 @@
 					<select name="user_group_id" class="form-control">
 						<?php foreach($group as $row) {
 							if($row->group_id == $_SESSION['user_group_id']) { ?>
-								<option value="<?=$row->group_id?>" selected="selected"><?=$row->group_name?></option>
+								<option value="<?=$row->group_id?>" selected><?=$row->group_name?></option>
 						<?php } else { ?>
 								<option value="<?=$row->group_id?> "><?=$row->group_name?></option>
 						<?php }
@@ -40,7 +40,7 @@
 				<label class="col-sm-4 control-label">Profile Image</label>
 				<div class="col-sm-8">
 					<input type="hidden" name="MAX_FILE_SIZE" value="10000000"/>
-					<input type="file" name="user_profile_image" accept="image/*" class="form-control">
+					<input type="file" name="user_profile_image" accept="image/*" value=<?=$_SESSION['user_profile_image']?> class="form-control">
 				</div>
 			</div>
 			<div class="form-group" style="margin-bottom: 0">				

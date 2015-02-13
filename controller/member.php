@@ -29,13 +29,15 @@ Class Member extends Controller {
 	
 	function signup_process() {
 		$options = array('cost' => 11);
-		$model 		= $this->loadModel('member_model');
-		$email 		= $_POST['user_email'];
-		$name 		= $_POST['user_name'];
-		$password 	= password_hash($_POST['user_password'], PASSWORD_BCRYPT, $options);
-		$group_id	= $_POST['user_group_id'];
+		$model 			= $this->loadModel('member_model');
+		$email 			= $_POST['user_email'];
+		$name 			= $_POST['user_name'];
+		$password	 	= password_hash($_POST['user_password'], PASSWORD_BCRYPT, $options);
+		$group_id		= $_POST['user_group_id'];
+		$profile_image	= './images/no-profile.png';
 		
-		$info = array($email, $name, $password, $group_id);
+		$info = array($email, $name, $password, $group_id, $profile_image);
+		
 		$res  = $model->regist($info);
 		
 		if($res) {
@@ -99,24 +101,35 @@ Class Member extends Controller {
 			</script>';
 		}
 		else {
-			$uploaddir = './upload/profile/'.$_SESSION['user_id'].'/';
-			if(file_exists($uploaddir) == false)
+			if($_FILES['user_profile_image']['size'] == 0)
 			{
-				mkdir("$uploaddir",0777); 
+				$uploadfile = $_SESSION['user_profile_image'];
 			}
-			$uploadfile = $uploaddir . basename($_FILES['user_profile_image']['name']);
-			move_uploaded_file($_FILES['user_profile_image']['tmp_name'], $uploadfile);
-			
+			else{
+				$uploaddir = './upload/profile/'.$_SESSION['user_id'].'/';
+				if(file_exists($uploaddir) == false)
+				{
+					mkdir("$uploaddir",0777); 
+				}
+				$uploadfile = $uploaddir . basename($_FILES['user_profile_image']['name']);
+				move_uploaded_file($_FILES['user_profile_image']['tmp_name'], $uploadfile);
+			}
 			$options 		= array('cost' => 11);
 			$email      	= $_POST['user_email'];
 			$name     		= $_POST['user_name'];
-			$password 		= password_hash($_POST['user_new_password'], PASSWORD_BCRYPT, $options);
+			
+			if($_POST['user_new_password'] == "") {
+				$password = $temp_res->password;
+			}
+			else {
+				$password 		= password_hash($_POST['user_new_password'], PASSWORD_BCRYPT, $options);
+			}
+			
 			$group_id		= $_POST['user_group_id'];
 			$user_id 		= $_SESSION['user_id'];
 			$profile_image	= $uploadfile;
-			$info1 = array($email, $name, $password, $group_id, $profile_image, $user_id);
-			$info2 = array($email);
-			$res = $model->edit($info1, $info2);
+			$info = array($email, $name, $password, $group_id, $profile_image, $user_id);
+			$res = $model->edit($info);
 			
 			if($res == TRUE) {
 				$_SESSION['user_id'] 			= $res->id;
