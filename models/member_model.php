@@ -10,6 +10,17 @@
 			return $this->query_exec($sql, $info);
 		}
 		
+		function getUsers() {
+			$sql = 'SELECT * FROM user';
+			return $this->query_result($sql, null);
+		}
+		
+		function getUserById($id) {
+			$sql = 'SELECT * FROM user where id = ?';
+			return $this->query_row($sql, array($id));
+			
+		}
+		
 		function loadGroupInfo() {
 			$sql = 'SELECT * FROM groups';
 			return $this->query_result($sql, null);
