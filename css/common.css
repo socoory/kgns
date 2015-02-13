@@ -202,3 +202,20 @@ body {
 	padding-top: 7px;
 	line-height: 1.2;
 }
+
+.content .user_profile {
+	float: left;
+	width: 60px;
+	padding: 30px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.content .user_info {
+	height: 60px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+	border-bottom: 1px dashed #EEE;
+}

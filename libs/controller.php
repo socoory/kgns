@@ -19,8 +19,13 @@ class Controller
 
 	public function loadModel($model_name)
 	{
-		require 'models/' . strtolower($model_name) . '.php';
+		if(!class_exists($model_name))
+			require 'models/' . strtolower($model_name) . '.php';
 		return new $model_name($this->db);
+	}
+	
+	public function redirect($message, $controller, $action) {
+		echo '<script>alert("'.$message.'"); location.replace("'.URL.'/'.$controller.'/'.$action.'");</script>';
 	}
 }
 ?>
