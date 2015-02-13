@@ -27,6 +27,9 @@
 					<a href="<?=URL?>/member/logout">
 						<span class="btn btn-danger btn-xs">LOGOUT</span>
 					</a>
+					<a href="<?=URL?>/member/edit">
+						<span class="btn btn-danger btn-xs">EDIT</span>
+					</a>
 					<?php } else { ?>
 					<a href="<?=URL?>/member/login">
 						<span class="btn btn-danger btn-xs">LOGIN</span>
