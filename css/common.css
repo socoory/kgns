@@ -192,6 +192,9 @@ body {
 	background: #CCC;
 	-webkit-border-radius: 50%;
 	border-radius: 50%;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
 }
 
 #sidebar .user_name {
