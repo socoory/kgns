@@ -20,6 +20,7 @@
 				<div class="col-md-2 text-left"><span class="fs_1_8_b va_btm">KGNS</span></div>
 				<div class="col-md-10 text-right">
 					<?php if(isset($_SESSION['is_logged'])) { ?>
+					<a href="<?=URL?>/timeline/write"><img src="<?=URL?>/images/write.png" style="height: 22px;"></a>
 					<span class="pd_5 fs_0_9">
 						<?=$_SESSION['user_name']?> ( <?=$_SESSION['user_email']?> )
 					</span>

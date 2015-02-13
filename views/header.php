@@ -21,6 +21,7 @@
 			    <div class="col-md-2 text-left"><span class="fs_1_8_b va_btm">KGNS</span></div>
 			    <div class="col-md-10 text-right">
 					<?php if(isset($_SESSION['is_logged'])) { ?>
+					<a href="<?=URL?>/timeline/write"><img src="<?=URL?>/images/write.png" style="height: 22px;"></a>
 					<span class="pd_5 fs_1_0 va_mid">
 						<?=$_SESSION['user_name']?> ( <?=$_SESSION['user_email']?> )
 					</span>
@@ -40,13 +41,13 @@
 		</div>
 	</div>
 
-	<div class="container-fluid">
+	<div class="container-fluid pd_tb_10">
 			<div class="row">
 				<div id="sidebar" class="col-md-3 pd_10">
 					<div class="basebox pd_lr_15 pd_tb_20">
 						<div class="user_info row">
 							<div class="col-xs-4">
-								<div class="user_profile style="background-image: url('<?=URL?>/images/no-profile.jpg')""></div>
+								<div class="user_profile" style="background-image: url('<?=URL?>/images/no-profile.png')"></div>
 							</div>
 							<div class="col-xs-8 user_name">
 								<span><strong><?=$_SESSION['user_name']?></strong></span><br>
@@ -79,4 +80,3 @@
 					</ul>
 				</div>
 				<div class="col-md-9 pd_10">
-					<div class="breadcrumbs basebox pd_lr_10 pd_tb_5">HOME > breadcrumbs</div>
