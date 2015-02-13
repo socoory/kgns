@@ -47,7 +47,7 @@
 					<div class="basebox pd_lr_15 pd_tb_20">
 						<div class="user_info row">
 							<div class="col-xs-4">
-								<div class="user_profile" style="background-image: url('<?=URL?>/images/no-profile.png');"></div>
+								<div class="user_profile" style="background-image: url('<?=$_SESSION['user_profile_image']?>');"></div>
 
 							</div>
 							<div class="col-xs-8 user_name">
