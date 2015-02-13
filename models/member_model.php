@@ -5,8 +5,8 @@
 		}
 		
 		function regist($info) {
-			$sql = 'INSERT INTO user(email, name, password, group_id, regdate)
-					VALUES(?, ?, ?, ?, now())';
+			$sql = 'INSERT INTO user(email, name, password, group_id, profile_image, regdate)
+					VALUES(?, ?, ?, ?, ?, now())';
 			return $this->query_exec($sql, $info);
 		}
 		
@@ -21,11 +21,11 @@
 			
 		}
 		
-		function edit($info1, $info2) {
+		function edit($info) {
 			$sql1 = 'UPDATE user SET email = ?, name = ?, password =?, group_id = ?, profile_image = ?, regdate = now() where id = ?';					
-			$this->query_exec($sql1, $info1);
+			$this->query_exec($sql1, $info);
 			$sql2 = 'SELECT * FROM user where email = ?';
-			return $this->query_row($sql2, $info2);
+			return $this->query_row($sql2, array($info[0]));
 		}
 	}
 ?>
