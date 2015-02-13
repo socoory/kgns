@@ -17,7 +17,9 @@
 	<div id="header">
 		<div class="pd_10 container-fluid">
             <div class="row">
-				<div class="col-md-2 text-left"><span class="fs_1_8_b va_btm">KGNS</span></div>
+			    <div class="col-md-2 text-left">
+			    	<a href="<?=URL?>"><span class="fs_1_8_b va_btm">KGNS</span></a>
+			    </div>
 				<div class="col-md-10 text-right">
 					<?php if(isset($_SESSION['is_logged'])) { ?>
 					<a href="<?=URL?>/timeline/write"><img src="<?=URL?>/images/write.png" style="height: 22px;"></a>

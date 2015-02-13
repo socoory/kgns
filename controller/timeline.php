@@ -13,8 +13,7 @@ class Timeline extends Controller {
 	//*******************************************************//
 	
 	public function index() {
-		$model = $this->loadModel('timeline_model');
-		$posts = $model->getPosts();
+		$posts = $this->timeline_model->getPosts();
 		
 		require './views/header.php';
 		require './views/timeline.php';
