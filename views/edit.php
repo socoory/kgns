@@ -1,7 +1,7 @@
 
 <div class="content text-center pd_10">
 	<div class="col-md-6 basebox center_block pd_20">
-		<form id="signup_form" action="<?=URL?>/member/edit_process" method="post" class="form-horizontal">
+		<form enctype="multipart/form-data" id="signup_form" action="<?=URL?>/member/edit_process" method="post" class="form-horizontal">
 			<div  class="form-group">
 				<label class="col-sm-4 control-label">E-Mail</label>
 				<div class="col-sm-8"><input type="text" name="user_email" value = <?php echo $_SESSION['user_email']?> class="form-control"></div>
@@ -34,6 +34,13 @@
 						<?php }
 						 } ?>
 					</select>
+				</div>
+			</div>
+			<div  class="form-group">
+				<label class="col-sm-4 control-label">Profile Image</label>
+				<div class="col-sm-8">
+					<input type="hidden" name="MAX_FILE_SIZE" value="10000000"/>
+					<input type="file" name="user_profile_image" accept="image/*" class="form-control">
 				</div>
 			</div>
 			<div class="form-group" style="margin-bottom: 0">				

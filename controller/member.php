@@ -68,11 +68,12 @@ Class Member extends Controller {
 		}
 		else {
 			if(password_verify($password, $res->password)) {
-				$_SESSION['is_logged'] 		= true;
-				$_SESSION['user_id'] 		= $res->id;
-				$_SESSION['user_name'] 		= $res->name;
-				$_SESSION['user_email'] 	= $res->email;
-				$_SESSION['user_group_id'] 	= $res->group_id;
+				$_SESSION['is_logged'] 			= true;
+				$_SESSION['user_id'] 			= $res->id;
+				$_SESSION['user_name'] 			= $res->name;
+				$_SESSION['user_email'] 		= $res->email;
+				$_SESSION['user_group_id'] 		= $res->group_id;
+				$_SESSION['user_profile_image']	= $res->profile_image;
 				header('Location: '. URL);
 			}
 			else {
@@ -98,34 +99,42 @@ Class Member extends Controller {
 			</script>';
 		}
 		else {
-			$options = array('cost' => 11);
-			$email      = $_POST['user_email'];
-			$name       = $_POST['user_name'];
-			$password 	= password_hash($_POST['user_new_password'], PASSWORD_BCRYPT, $options);
-			$group_id   = $_POST['user_group_id'];
-			$user_id 	= $_SESSION['user_id'];
-			$info1 = array($email, $name, $password, $group_id, $user_id);
+			$uploaddir = './upload/profile/'.$_SESSION['user_id'].'/';
+			if(file_exists($uploaddir) == false)
+			{
+				mkdir("$uploaddir",0777); 
+			}
+			$uploadfile = $uploaddir . basename($_FILES['user_profile_image']['name']);
+			move_uploaded_file($_FILES['user_profile_image']['tmp_name'], $uploadfile);
+			
+			$options 		= array('cost' => 11);
+			$email      	= $_POST['user_email'];
+			$name     		= $_POST['user_name'];
+			$password 		= password_hash($_POST['user_new_password'], PASSWORD_BCRYPT, $options);
+			$group_id		= $_POST['user_group_id'];
+			$user_id 		= $_SESSION['user_id'];
+			$profile_image	= $uploadfile;
+			$info1 = array($email, $name, $password, $group_id, $profile_image, $user_id);
 			$info2 = array($email);
 			$res = $model->edit($info1, $info2);
-			var_dump($res);
+			
 			if($res == TRUE) {
-				$_SESSION['user_id'] 		= $res->id;
-				$_SESSION['is_logged'] 		= true;
-				$_SESSION['user_name'] 		= $res->name;
-				$_SESSION['user_email'] 	= $res->email;
-				$_SESSION['user_group_id'] 	= $res->group_id;
+				$_SESSION['user_id'] 			= $res->id;
+				$_SESSION['is_logged'] 			= true;
+				$_SESSION['user_name'] 			= $res->name;
+				$_SESSION['user_email'] 		= $res->email;
+				$_SESSION['user_group_id'] 		= $res->group_id;
+				$_SESSION['user_profile_image']	= $res->profile_image;
 				header('Location: '. URL);
 			}
 			else {
 				echo '<script>
 				alert("Edit Fail!");
 				location.replace("'.URL.'/member/edit");
-				</script>';
-				
+				</script>';	
 			}
 		}
 	}
-	
 	
 	function logout() {
 		session_destroy();

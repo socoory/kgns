@@ -22,7 +22,7 @@
 		}
 		
 		function edit($info1, $info2) {
-			$sql1 = 'UPDATE user SET email = ?, name = ?, password =?, group_id = ?, regdate = now() where id = ?';					
+			$sql1 = 'UPDATE user SET email = ?, name = ?, password =?, group_id = ?, profile_image = ?, regdate = now() where id = ?';					
 			$this->query_exec($sql1, $info1);
 			$sql2 = 'SELECT * FROM user where email = ?';
 			return $this->query_row($sql2, $info2);
