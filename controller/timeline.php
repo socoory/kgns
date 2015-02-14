@@ -15,7 +15,7 @@ class Timeline extends Controller {
 	public function index() {
 		$posts = $this->timeline_model->getPosts();
 		
-		require './views/header.php';
+		require './views/header-timeline.php';
 		require './views/timeline.php';
 		require './views/footer.php';
 	}

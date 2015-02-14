@@ -203,6 +203,14 @@ body {
 	line-height: 1.2;
 }
 
+#timeline_header {
+	height: 200px;
+	margin-bottom: 0;
+	background: url('http://assets.worldwildlife.org/photos/2842/images/hero_small/shutterstock_12730534.jpg?1352150501');
+	color:#FFF;
+	font-weight:bold;
+}
+
 .content .user_profile {
 	float: left;
 	width: 50px;
