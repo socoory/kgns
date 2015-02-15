@@ -17,7 +17,12 @@
 		
 		function getUserById($id) {
 			$sql = 'SELECT * FROM user where id = ?';
-			return $this->query_row($sql, array($id));
+			return $this->query_row($sql, array($id));			
+		}
+		
+		function getUserByGroup($group) {
+			$sql = 'SELECT * FROM user where group_id = ?';
+			return $this->query_result($sql, $group);
 			
 		}
 		

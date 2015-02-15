@@ -1,4 +1,5 @@
 <?php
+if (!defined("__KGNS__")) exit;
 
 Class Gns_admin extends Controller {
 	function __construct() {
@@ -32,36 +33,58 @@ Class Gns_admin extends Controller {
 				$_SESSION['admin_email'] 	= $res->email;
 				
 				header('Location: '. URL.'/gns_admin/user_list');
-				
-				//location.replace("'.URL.'/gns_admin/edit_user");
 			}
 			else {
 				echo '<script>
 				alert("Login Fail");
-				location.replace("'.URL.'/member/login");
+				location.replace("'.URL.'/gns_admin");
 				</script>';
 			}
 		}
 	}
 	
 	function user_list() {
-		$model = $this->loadModel('member_model');
-		$users = $model->getUsers();
-		
-		require './views/header-admin.php';
-		require './views/user-list.php';
-		require './views/footer.php';	
-		
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
+			$model = $this->loadModel('member_model');			
+			
+			if(isset($_POST['group_id'])) {
+				if($_POST['group_id']==0) {
+					$users = $model->getUsers();
+				}
+				else {
+					$group_id = $_POST['group_id'];
+					$users = $model->getUserByGroup(array($group_id));
+				}
+			}
+			else {
+				$users = $model->getUsers();
+			}
+			
+			$group = $model->loadGroupInfo();
+			
+			require './views/header-admin.php';
+			require './views/user-list.php';
+			require './views/footer.php';
+			
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}		
 	}
 	
 	function edit_user($id) {
-		$model = $this->loadModel('member_model');
-		$user = $model->getUserById($id);
-		$group = $model->loadGroupInfo();
-		
-		require './views/header-admin.php';
-		require './views/edit-user-admin.php';
-		require './views/footer.php';
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
+			$model = $this->loadModel('member_model');
+			$user = $model->getUserById($id);
+			$group = $model->loadGroupInfo();
+			
+			require './views/header-admin.php';
+			require './views/edit-user-admin.php';
+			require './views/footer.php';
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}
 	}
 	
 	function edit_user_process() {
@@ -84,6 +107,40 @@ Class Gns_admin extends Controller {
 				
 	}
 	
+	function delete_user($id=null) {
+		if($id == null) {
+			return;
+		}
+		
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {						
+			$model = $this->loadModel('admin_model');
+			$res = $model->delete_user(array($id));
+			
+			if($res) {
+				$this->redirect('delete success', '/gns_admin/user_list', '');
+			}
+			else {
+				$this->redirect('delete fail', '/gns_admin/user_list', '');
+			}
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}		
+	}
+		
+	function group_list() {
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
+			$model = $this->loadModel('member_model');
+			$groups = $model->loadGroupInfo();
+			
+			require './views/header-admin.php';
+			require './views/admin-group-list.php';
+			require './views/footer.php';
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}
+	}
 }
 
 ?>
