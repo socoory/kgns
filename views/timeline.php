@@ -23,7 +23,7 @@
 		<div class="comment_block clearfix pd_10">
 			<div class="user_profile" style="background-image: url('<?=$comment->user_profile_image?>'); width: 40px; padding: 20px;"></div>
 			<div class="user_text">
-				<span><strong><?=$post->user_name?> </strong></span>
+				<span><strong><?=$comment->user_name?> </strong></span>
 				<span class="regdate"> : <?=$comment->regdate?></span>
 				<p><?=nl2br($comment->contents)?></p>
 			</div>

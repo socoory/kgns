@@ -26,10 +26,10 @@
 			</form>
 		</div>
 		<?php foreach($comments as $comment) { ?>
-		<div class="comment_block clearfix">
+		<div class="comment_block clearfix pd_10">
 			<div class="user_profile" style="background-image: url('<?=$comment->user_profile_image?>')"></div>
-			<div class="user_text pd_tb_10">
-				<span><strong><?=$post->user_name?> </strong></span>
+			<div class="user_text">
+				<span><strong><?=$comment->user_name?> </strong></span>
 				<span class="regdate"> : <?=$comment->regdate?></span>
 				<p><?=nl2br($comment->contents)?></p>
 			</div>
