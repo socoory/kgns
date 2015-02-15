@@ -15,7 +15,7 @@ class Timeline extends Controller {
 	public function index() {
 		$posts = $this->timeline_model->getPosts();
 		
-		require './views/header.php';
+		require './views/header-timeline.php';
 		require './views/timeline.php';
 		require './views/footer.php';
 	}
@@ -24,6 +24,29 @@ class Timeline extends Controller {
 		require './views/header-no-sidebar.php';
 		require './views/write.php';
 		require './views/footer-none.php';
+	}
+	
+	function read($post_id=null) {
+		if($post_id == null) {
+			return;
+		}
+		
+		$post = $this->timeline_model->getPost($post_id);
+		
+		if(!$post) {
+			require './views/header-no-sidebar.php';
+			require './views/404.php';
+			require './views/footer-none.php';
+			return;
+		}
+		else {
+			$comments = $this->timeline_model->getComments($post_id);
+			
+			require './views/header.php';
+			require './views/read.php';
+			require './views/footer-none.php';
+			return;
+		}
 	}
 	
 	
@@ -52,6 +75,25 @@ class Timeline extends Controller {
 		}
 	}
 	
+	function comment() {
+		if(!$this->isLogged())
+			header('Location: '.URL.'/member/login');
+			
+		$sess   = $this->mapSession();
+		$post	= $this->mapPost();
+
+		$info = array($post->post_id, $post->content, $sess->user_id, $sess->user_name, $sess->user_profile_image);
+		
+		$res = $this->timeline_model->comment($info);
+		
+		if($res) {
+			echo '<script>location.replace("'.URL.'/timeline/read/'.$post->post_id.'");</script>';
+		}
+		else {
+			echo 'fail';
+		}
+	}
+	
 	
 	//*******************************************************//
 	//                        normal                         //
@@ -65,6 +107,16 @@ class Timeline extends Controller {
 		$object = new stdClass();
 		
 		foreach($_SESSION as $key => $val) {
+			$object->$key = $val;
+		}
+		
+		return $object;
+	}
+
+	function mapPost() {
+		$object = new stdClass();
+		
+		foreach($_POST as $key => $val) {
 			$object->$key = $val;
 		}
 		

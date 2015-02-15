@@ -203,6 +203,19 @@ body {
 	line-height: 1.2;
 }
 
+#timeline_header {
+	height: 200px;
+	margin-bottom: 0;
+	background: url('http://assets.worldwildlife.org/photos/2842/images/hero_small/shutterstock_12730534.jpg?1352150501');
+	color:#FFF;
+	font-weight:bold;
+}
+
+.regdate {
+	font-size: 0.8em;
+	color: #888;
+}
+
 .content .user_profile {
 	float: left;
 	width: 50px;
@@ -225,4 +238,20 @@ body {
 	padding-bottom: 10px;
 	margin-bottom: 10px;
 	border-bottom: 1px dashed #EEE;
+}
+
+.comments {
+	overflow: hidden;
+}
+
+.comments .input_row {
+}
+
+.comment_block {
+	border-top: 1px solid #EEE;
+	background-color: #FAFAFA;
+}
+
+.comment_block:first-child {
+	border-top: none;
 }
