@@ -36,13 +36,18 @@
 					</select>
 				</div>
 			</div>
-			<div  class="form-group">
+			<div class="form-group">
 				<label class="col-sm-4 control-label">Profile Image</label>
-				<div class="col-sm-8">
+				<div class="col-sm-8" style="padding-top: 8px">
 					<input type="hidden" name="MAX_FILE_SIZE" value="10000000"/>
-					<input type="file" name="user_profile_image" accept="image/*" value=<?=$_SESSION['user_profile_image']?> class="form-control">
+					<input type="file" name="user_profile_image" accept="image/*" class="pull-left" style="display: inline-block; width: 75%">
+					<div style="width: 25%; display: inline-block;">
+					    <label class="pull-right">delete</label>
+					    <input type="checkbox" name="check_delete_image" class="pull-right text-right">
+				    </div>
 				</div>
 			</div>
+			
 			<div class="form-group" style="margin-bottom: 0">				
 				<div class="col-md-12 text-right">
 					<button type="submit" class="btn btn-danger">Submit</button>
