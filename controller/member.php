@@ -77,6 +77,14 @@ Class Member extends Controller {
 		}
 		else {
 			if(password_verify($password, $res->password)) {
+				if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+				    $ip = $_SERVER['HTTP_CLIENT_IP'];
+				} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+				} else {
+				    $ip = $_SERVER['REMOTE_ADDR'];
+				}
+				$_SESSION['user_ip']			= $ip;
 				$_SESSION['is_logged'] 			= true;
 				$_SESSION['user_id'] 			= $res->id;
 				$_SESSION['user_name'] 			= $res->name;
@@ -97,47 +105,48 @@ Class Member extends Controller {
 	function edit_process() {
 		$email_info = array($_POST['user_email']);
 		$checked_email = $this->member_model->loadEmailInfo($email_info);
+		
 		if((empty($checked_email) == FALSE) && ($_SESSION['user_email'] != $_POST['user_email'])) {
-			echo '<script>
-			alert("중복된 이메일이 있습니다.");
-			location.replace("'.URL.'/member/edit");
-			</script>';
+			$this->redirect("중복된 이메일이 있습니다.", "member", "edit");
+			return;
 		}
 		else {
 			$temp_res = $this->member_model->loadUserInfo($email_info);
 			$old_password = $_POST['user_old_password'];
 			
 			if(password_verify($old_password, $temp_res->password) == FALSE) {
-				echo '<script>
-				alert("Old password do not match!");
-				location.replace("'.URL.'/member/edit");
-				</script>';
+				$this->redirect("이전 패스워드가 맞지 않습니다.", "member", "edit");
+				return;
 			}
 			else {
-				if($_POST['check_delete_image'] == "on") {
+				if(isset($_POST['check_delete_image'])) {
 					$uploadfile = URL.'/images/no-profile.png';
 				}
 				else {
-					if($_FILES['user_profile_image']['name'] == null)
-					{
+					if($_FILES['user_profile_image']['name'] == null) {
 						$uploadfile = $_SESSION['user_profile_image'];
 					}
-					else{
-						$uploaddir = './upload/profile/'.$_SESSION['user_id'].'/';				
-						if(file_exists($uploaddir) == false)
-						{
-							mkdir("$uploaddir", 0777); 
+					else {
+						if(strpos($_FILES['user_profile_image']['type'], 'image') === false) {
+							$this->redirect("이미지 파일이 아닙니다.", "member", "edit");
+							return;
 						}
-						$uploadfile = $uploaddir . $_FILES['user_profile_image']['name'];
-						if(move_uploaded_file($_FILES['user_profile_image']['tmp_name'], $uploadfile))
-						{
-							$thumb = $uploaddir.'/thumb_'. $_FILES['user_profile_image']['name'];
-							
-							if($this->make_thumbnail($uploadfile, 100, 100, $thumb)) {
-								$uploadfile = URL.'/upload/profile/'.$_SESSION['user_id'].'/'.'thumb_'. $_FILES['user_profile_image']['name'];
+						else {
+							$uploaddir = './upload/profile/'.$_SESSION['user_id'].'/';				
+							if(file_exists($uploaddir) == false) {
+								mkdir("$uploaddir", 0777); 
 							}
-							else {
-								$thumb = $uploaddir;
+							$uploadfile = $uploaddir . $_FILES['user_profile_image']['name'];
+							if(move_uploaded_file($_FILES['user_profile_image']['tmp_name'], $uploadfile))
+							{
+								$thumb = $uploaddir.'/thumb_'. $_FILES['user_profile_image']['name'];
+								
+								if($this->make_thumbnail($uploadfile, 100, 100, $thumb)) {
+									$uploadfile = URL.'/upload/profile/'.$_SESSION['user_id'].'/'.'thumb_'. $_FILES['user_profile_image']['name'];
+								}
+								else {
+									$thumb = $uploaddir;
+								}
 							}
 						}
 					}

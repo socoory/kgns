@@ -77,5 +77,23 @@ class Application
 			require './views/404.php';
 			require './views/footer.php';
 		}
+		
+		if(isset($_SESSION['user_ip'])) {
+			if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+			    $ip = $_SERVER['HTTP_CLIENT_IP'];
+			} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			} else {
+			    $ip = $_SERVER['REMOTE_ADDR'];
+			}
+			
+			if($_SESSION['user_ip'] != $ip) {
+				session_destroy();
+				echo '<script>
+					alert("IP가 변경되었습니다.!");
+					location.replace("'.URL.'");
+					</script>';
+			}
+		}
 	}
 }
