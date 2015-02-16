@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 define("__KGNS__", TRUE);
 require './config/config.php';
 require './libs/application.php';

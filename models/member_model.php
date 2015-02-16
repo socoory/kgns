@@ -38,8 +38,8 @@ class Member_model extends Model {
 	}
 	
 	function loadEmailInfo($info) {
-		$sql = 'SELECT email FROM user';
-		return $this->query_result($sql, null); 
+		$sql = 'SELECT email FROM user where email = ?';
+		return $this->query_row($sql, $info); 
 	}
 	
 	function edit($info) {
