@@ -15,7 +15,7 @@
 </head>
 <body>
 	<div id="header">
-		<div class="pd_10 container-fluid">
+		<div class="pd_tb_10 container-fluid">
             <div class="row">
 			    <div class="col-md-2 text-left"><span class="fs_1_8_b va_btm">KGNS</span></div>
 			    <div class="col-md-10 text-right">
@@ -38,8 +38,8 @@
 
 	<div class="container-fluid">
 			<div class="row">
-				<div id="sidebar" class="col-md-3 pd_10">
-					<div class="basebox pd_10">
+				<div id="sidebar" class="col-md-3 pd_15">
+					<div class="basebox pd_15">
 						<ul class="ul_base">
 							<li class="fs_1_0_b">SIDEBAR</li>
 							<li>User</li>
@@ -47,7 +47,7 @@
 						</ul>
 					</div>
 					
-					<div class="basebox pd_10">
+					<div class="basebox pd_15">
 						<ul class="ul_base">
 							<li class="fs_1_0_b">SIDEBAR</li>
 							<li>Posts</li>
@@ -56,12 +56,12 @@
 						</ul>
 					</div>
 					
-					<div class="basebox pd_10">
+					<div class="basebox pd_15">
 						<ul class="ul_base">
 							<li class="fs_1_0_b">SIDEBAR</li>
 							<li>Settings</li>
 						</ul>
 					</div>
 				</div>
-				<div class="col-md-9 pd_10">
+				<div class="col-md-9 pd_15">
 					<div class="breadcrumbs basebox pd_lr_10 pd_tb_5">HOME > breadcrumbs</div>

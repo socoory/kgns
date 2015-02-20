@@ -20,7 +20,9 @@ class Timeline_model extends Model {
 									 ORDER BY post_id DESC', null);
 									 
 		foreach($res as $row) {
-			$row->comments = $this->getComments($row->post_id, 3);
+			$row->comments 	  = $this->getComments($row->post_id, 3);
+			$row->attachImage = $this->getAttaches($row->post_id, 'i', 3);
+			$row->attachFile  = $this->getAttaches($row->post_id, 'f', 3);
 		}
 		
 		return $res;
@@ -38,14 +40,26 @@ class Timeline_model extends Model {
 									    , array($postId));
 	}
 	
+	function getAttaches($postId, $type, $count=null) {
+		if($count == null)
+			return $this->query_result("SELECT * FROM attach WHERE post_id = ? AND type = ?", array($post_id, $type));
+		else
+			return $this->query_result('SELECT * FROM attach WHERE post_id = ? AND type = ?
+										ORDER BY attach_id DESC LIMIT '.$count, array($postId, $type));
+	}
+	
+	function insertId() {
+		return $this->query_row("SELECT LAST_INSERT_ID() as id", null)->id;
+	}
+	
 	
 	//*******************************************************//
 	//                         insert                        //
 	//*******************************************************//
 	
 	function post($info) {
-		$sql = "INSERT INTO post (contents, user_id, user_name, user_profile_image, group_id, regdate)
-				VALUES (?, ?, ?, ?, ?, NOW())";
+		$sql = "INSERT INTO post (post_id, contents, user_id, user_name, user_profile_image, group_id, regdate)
+				VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?, NOW())";
 				
 		return $this->query_exec($sql, $info);
 	}

@@ -2,9 +2,9 @@
 			</div>
 		</div>
 	</div>
-	<div id="footer">
+	<div id="footer" class="pd_lr_15">
         <div class="row">
-		    <div class="col-md-12 text-center pd_10">
+		    <div class="col-md-12 text-center pd_tb_10">
 		        KGNS open source project
 		    </div>
         </div>
