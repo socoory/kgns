@@ -11,6 +11,8 @@ class Attach extends Controller {
 			exit();
 		}
 		
+		require 'libs/functions.php';
+		
 		$session  	= $this->mapSession();	
 		$attach   	= $_FILES['attach'];
 		$fileType 	= explode('/', $attach['type']);
@@ -52,10 +54,11 @@ class Attach extends Controller {
 		}
 		
 		$res = $this->model->attach(array($session->user_id, $fileUrl, $type, $attach['name']));
+		$thumb = createThumb($uploadDir, $fileName, 100, 100);
 		
 		if($res) {
 			$obj = new stdClass();
-			$obj->fileUrl 	= $fileUrl;
+			$obj->fileUrl 	= $thumb;
 			$obj->fileName 	= $attach['name'];
 			$obj->fileNo 	= $this->model->insertId();
 			echo json_encode($obj);

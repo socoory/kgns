@@ -42,10 +42,10 @@ class Timeline_model extends Model {
 	
 	function getAttaches($postId, $type, $count=null) {
 		if($count == null)
-			return $this->query_result("SELECT * FROM attach WHERE post_id = ? AND type = ?", array($post_id, $type));
+			return $this->query_result("SELECT * FROM attach WHERE post_id = ? AND type = ? ORDER BY attach_id ASC", array($post_id, $type));
 		else
 			return $this->query_result('SELECT * FROM attach WHERE post_id = ? AND type = ?
-										ORDER BY attach_id DESC LIMIT '.$count, array($postId, $type));
+										ORDER BY attach_id ASC LIMIT '.$count, array($postId, $type));
 	}
 	
 	function insertId() {

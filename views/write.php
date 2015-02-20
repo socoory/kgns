@@ -40,7 +40,7 @@
 		<div class="input-group">
 			<label class="input-group-addon">Menu</label>
 			<input type="text" class="form-control input-sm" name="menu" />
-			<a class="input-group-addon" id="btn_addLunch" class="btn btn-default btn-sm">Add</a>
+			<a class="input-group-addon btn" id="btn_addLunch">Add</a>
 		</div>
 	</div>
 	<ul id="lunch_placeholder" class="row"></ul>
@@ -99,7 +99,7 @@
 	var Img = Backbone.Model.extend({
 		initialize: function() {
 		},
-		url: 'localhost',
+		url: '.',
 		image: null,
 		fileNo: null
 	});
@@ -107,7 +107,7 @@
 	var Imgs = Backbone.Collection.extend({
 		initialize: function (models, options) {
 		},
-		url: 'localhost',
+		url: '.',
 		model: Img,
 		empty: function() {
 			return !this.length;
@@ -119,7 +119,7 @@
 	var FileInfo = Backbone.Model.extend({
 		initialize: function() {
 		},
-		url: 'localhost',
+		url: '.',
 		fileName: null,
 		fileNo: null
 	});
@@ -127,7 +127,7 @@
 	var FileInfos = Backbone.Collection.extend({
 		initialize: function (models, options) {
 		},
-		url: 'localhost',
+		url: '.',
 		model: FileInfo,
 		empty: function() {
 			return !this.length;
@@ -139,14 +139,14 @@
 	var Lunch = Backbone.Model.extend({
 		initialize: function() {
 		},
-		url: 'localhost',
+		url: '.',
 		menu: null
 	});
 	
 	var Lunches = Backbone.Collection.extend({
 		initialize: function (models, options) {
 		},
-		url: 'localhost',
+		url: '.',
 		model: Lunch,
 		empty: function() {
 			return !this.length;

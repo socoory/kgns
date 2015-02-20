@@ -12,13 +12,14 @@
 	<div class="content_text clearfix">
 		<p><?=nl2br($post->contents)?></p>
 		<div class="text-center pd_tb_20">
+			<?php require_once 'libs/functions.php'; ?>
 			<?php foreach($post->attachImage as $attach) {
 					if(!isset($imageTitle)) {
 						echo '<hr class="pd_0" />';
 						$imageTitle = TRUE;
-					}  
+					}
 			?>
-				<img class="attach_img_thumb img-thumbnail" src="<?=$attach->file_url?>" />
+				<img class="attach_img_thumb img-thumbnail" src="<?=getThumb(URL.'/'.$attach->file_url)?>" />
 			<?php } ?>
 		</div>
 		<p>
