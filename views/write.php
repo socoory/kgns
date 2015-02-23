@@ -169,7 +169,7 @@
 	    },
 	    
 	    render: function() {
-	    	$(this.el).append(this.template(this.model.toJSON()));
+	    	$(this.el).html(this.template(this.model.toJSON()));
 	    	return this.el;
 	    },
 	    
@@ -192,7 +192,7 @@
 	    },
 	    
 	    render: function() {
-	    	$(this.el).append(this.template(this.model.toJSON()));
+	    	$(this.el).html(this.template(this.model.toJSON()));
 	    	return this.el;
 	    },
 	    
@@ -218,7 +218,7 @@
 	    	$(this.el).addClass('lunch')
 	    	$(this.el).addClass('pd_lr_10')
 	    	$(this.el).addClass('text-center')
-	    	$(this.el).append(this.template(this.model.toJSON()));
+	    	$(this.el).html(this.template(this.model.toJSON()));
 	    	return this.el;
 	    },
 	    
@@ -228,7 +228,7 @@
 	});
 	
 	var LunchHolder = Backbone.View.extend({
-		tagname: "div",
+		tagName: "div",
 		template: _.template($("#lunch_holder").html()),
 		events: {
 			"click a#btn_addLunch": "addLunch",

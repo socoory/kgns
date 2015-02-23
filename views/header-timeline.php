@@ -8,7 +8,7 @@
 			    <div class="col-md-10 text-right">
 					<?php if(isset($_SESSION['is_logged'])) { ?>
 					<a href="<?=URL?>/timeline/write"><img src="<?=URL?>/images/write.png" style="height: 22px;"></a>
-					<span class="pd_5 fs_1_0 va_mid">
+					<span class="pd_5 fs_0_9 va_mid">
 						<?=$_SESSION['user_name']?> ( <?=$_SESSION['user_email']?> )
 					</span>
 					<a href="<?=URL?>/member/logout">
@@ -37,7 +37,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div id="sidebar" class="col-md-3 pd_15">
+				<div id="sidebar" class="col-sm-3 pd_15">
 					<div class="basebox pd_lr_15 pd_tb_20">
 						<div class="user_info row">
 							<div class="col-xs-4">
@@ -64,4 +64,4 @@
 						</ul>
 					</div>
 				</div>
-				<div class="col-md-9 pd_15">
+				<div class="col-sm-9 pd_15">

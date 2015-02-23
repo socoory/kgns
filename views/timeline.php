@@ -19,7 +19,7 @@
 						$imageTitle = TRUE;
 					}
 			?>
-				<img class="attach_img_thumb img-thumbnail" src="<?=getThumb(URL.'/'.$attach->file_url)?>" />
+				<img class="attach_img_thumb img-thumbnail" src="<?=getThumb(URL.'/'.$attach->file_url)?>" data-toggle="modal" data-target="#timelineModal" />
 			<?php } ?>
 		</div>
 		<p>
@@ -54,3 +54,44 @@
 	</div>
 </div>
 <?php }?>
+
+<style>
+	#modalWrap {
+		position: fixed;
+		left: 50%;
+		top: 50%;
+		height: 0;
+	}
+	
+	.modal-dialog {
+		margin: 0 auto;
+		height: 0;
+	}
+	
+	.modal-content {
+		transform: translate(-50, -50%) !important;
+		-ms-transform: translate(-50, -50%) !important; /* IE 9 */
+		-webkit-transform: translate(-50%, -50%) !important; /* Safari and Chrome */
+	}
+	
+	.modal-body > img {
+		width: 100%;
+	}
+</style>
+
+<div class="modal fade" id="timelineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div id="modalWrap">
+		<div class="modal-dialog">
+		    <div class="modal-content pd_0">
+		    	<div class="modal-body">
+		    	</div>
+		    </div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(".attach_img_thumb").click(function(event) {
+		$(".modal-body").html('<img src="' + event.target.src.replace("thumb_100x100_", "") + '" />');
+	});
+</script>
