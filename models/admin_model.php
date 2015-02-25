@@ -38,9 +38,19 @@ Class Admin_model extends Model {
 		return $this->query_result($sql, ($group_id ? array($group_id) : null));
 	}
 	
+	function getGroupInfoByGroupId($g_id) {
+		$sql = 'SELECT *FROM groups where group_id = ?';
+		return $this->query_row($sql, array($g_id));
+	}
+	
 	function editGroupInfo($info) {
-		$sql = 'UPDATE groups SET group_id = ?, group_name = ?';
+		$sql = 'UPDATE groups SET group_name = ? where group_id = ?';
 		return $this->query_exec($sql, $info);
+	}
+	
+	function groupJoin() {
+		$sql = 'SELECT G.group_id, G.group_name, U.cnt FROM groups as G LEFT JOIN (SELECT group_id, COUNT(*) cnt FROM user GROUP BY group_id) as U ON G.group_id=U.group_id';
+		return $this->query_result($sql, null);
 	}
 	
 }
