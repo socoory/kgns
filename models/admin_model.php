@@ -38,6 +38,11 @@ Class Admin_model extends Model {
 		return $this->query_result($sql, ($group_id ? array($group_id) : null));
 	}
 	
+	function editGroupInfo($info) {
+		$sql = 'UPDATE groups SET group_id = ?, group_name = ?';
+		return $this->query_exec($sql, $info);
+	}
+	
 }
 
 ?>

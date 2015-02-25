@@ -176,6 +176,24 @@ Class Gns_admin extends Controller {
 			$this->redirect('404 Not Found Error', 'gns_admin', '');
 		}
 	}
+
+	function edit_group($g_id) {
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
+			$member_model = $this->loadModel('member_model');
+			$group = $member_model->loadGroupInfo();
+			
+			require './views/header-admin.php';
+			require './views/edit-user-admin.php';
+			require './views/footer.php';
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}
+	}
+	
+	function delete_group() {
+		
+	}
 }
 
 ?>
