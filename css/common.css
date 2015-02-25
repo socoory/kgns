@@ -151,6 +151,7 @@ a, a:hover, a:active, a:visited, a:link {
 .pos_t_50 {
     position: relative;
     top: 50%;
+}
 
 .center_wrap {
 	position: relative;
