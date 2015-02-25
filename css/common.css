@@ -151,6 +151,23 @@ a, a:hover, a:active, a:visited, a:link {
 .pos_t_50 {
     position: relative;
     top: 50%;
+
+.center_wrap {
+	position: relative;
+	overflow: hidden;
+}
+
+.center_innerWrap {
+	float: left;
+	position: relative;
+	left: 50%;
+}
+
+.center_content {
+	overflow: hidden;
+	float: left;
+	position: relative;
+	left: -50%;
 }
 
 

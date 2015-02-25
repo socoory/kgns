@@ -43,24 +43,58 @@ Class Gns_admin extends Controller {
 		}
 	}
 	
-	function user_list() {
+	function user_list($page=1) {
 		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
-			$model = $this->loadModel('member_model');			
+			$member_model 	= $this->loadModel('member_model');
+			$admin_model 	= $this->loadModel('admin_model');
+			$limit 			= 10;
+			$startPage 		= 1;
+			$endPage 		= 0;
+			$group_id 		= 0;
 			
-			if(isset($_POST['group_id'])) {
-				if($_POST['group_id']==0) {
-					$users = $model->getUsers();
-				}
-				else {
-					$group_id = $_POST['group_id'];
-					$users = $model->getUserByGroup(array($group_id));
-				}
+			if(isset($_GET['gid'])) {
+				$_POST['group_id'] = $_GET['gid'];
+			}
+			
+			if(!isset($_POST['group_id']) || $_POST['group_id'] == 0) {
+				$totalPage = $admin_model->getTotalPage('user');
 			}
 			else {
-				$users = $model->getUsers();
+				$group_id = $_POST['group_id'];
+				$totalPage = $admin_model->getTotalPage('user', 'group_id = '.$group_id);
 			}
 			
-			$group = $model->loadGroupInfo();
+			// calculate page numbers
+			if(($page > 2) && ($page < $totalPage -2)) {
+				$startPage = $page - 2;
+				$endPage = $page + 2;					
+			}
+			else if($page <= 2) {
+				$startPage = 1;
+				$endPage = $totalPage > 5 ? 5 : $totalPage;
+			}
+			else {
+				if ($totalPage - 4 == 0)
+					$startPage = 1;
+				else
+					$startPage = $totalPage - 4;
+				$endPage = $totalPage;
+			}
+				
+			$info = array('start' 	=> ($page*10 - 10),
+						  'end' 	=> $limit);
+						  
+			// select user query
+			if($group_id == 0) {
+				$users = $admin_model->getUsersByLimit($info);				
+			}
+			else {
+				$users = $admin_model->getUsersByLimit($info, $group_id);
+			}
+			
+			// $%@^@%
+			$group = $member_model->loadGroupInfo();
+			$currPage = $page;
 			
 			require './views/header-admin.php';
 			require './views/user-list.php';
@@ -90,11 +124,12 @@ Class Gns_admin extends Controller {
 	function edit_user_process() {
 		$model = $this->loadModel('admin_model');
 		
+		$id = $_POST['user_id'];
 		$email = $_POST['user_email'];
 		$name = $_POST['user_name'];
 		$group_id = $_POST['user_group_id'];
 		
-		$info = array($email, $name , $group_id, $email);
+		$info = array($email, $name , $group_id, $id);
 		
 		$res = $model->edit_user($info);
 		
@@ -130,8 +165,8 @@ Class Gns_admin extends Controller {
 		
 	function group_list() {
 		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
-			$model = $this->loadModel('member_model');
-			$groups = $model->loadGroupInfo();
+			$admin_model=$this->loadModel('admin_model');			
+			$groups=$admin_model->groupJoin();
 			
 			require './views/header-admin.php';
 			require './views/admin-group-list.php';
@@ -140,6 +175,42 @@ Class Gns_admin extends Controller {
 		else {
 			$this->redirect('404 Not Found Error', 'gns_admin', '');
 		}
+	}
+
+	function edit_group($g_id) {
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
+			$admin_model = $this->loadModel('admin_model');
+			$group = $admin_model->getGroupInfoByGroupId($g_id);
+			
+			require './views/header-admin.php';
+			require './views/edit-group-admin.php';
+			require './views/footer.php';			
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}
+	}
+
+	function edit_group_process() {
+		$admin_model = $this->loadModel('admin_model');
+		
+		$g_id = $_POST['group_id'];
+		$g_name = $_POST['group_name'];
+		
+		$info = array($g_name, $g_id);
+		
+		$res = $admin_model->editGroupInfo($info);
+		
+		if($res) {
+			echo '<script>location.replace("'.URL.'/gns_admin/group_list");</script>';
+		}
+		else {
+			echo '<script>alert("edit fail!"); location.replace("'.URL.'/gns_admin/group_list");</script>';
+		}
+	}	
+	
+	function delete_group() {
+		
 	}
 }
 
