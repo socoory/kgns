@@ -43,24 +43,58 @@ Class Gns_admin extends Controller {
 		}
 	}
 	
-	function user_list() {
+	function user_list($page=1) {
 		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
-			$model = $this->loadModel('member_model');			
+			$member_model 	= $this->loadModel('member_model');
+			$admin_model 	= $this->loadModel('admin_model');
+			$limit 			= 10;
+			$startPage 		= 1;
+			$endPage 		= 0;
+			$group_id 		= 0;
 			
-			if(isset($_POST['group_id'])) {
-				if($_POST['group_id']==0) {
-					$users = $model->getUsers();
-				}
-				else {
-					$group_id = $_POST['group_id'];
-					$users = $model->getUserByGroup(array($group_id));
-				}
+			if(isset($_GET['gid'])) {
+				$_POST['group_id'] = $_GET['gid'];
+			}
+			
+			if(!isset($_POST['group_id']) || $_POST['group_id'] == 0) {
+				$totalPage = $admin_model->getTotalPage('user');
 			}
 			else {
-				$users = $model->getUsers();
+				$group_id = $_POST['group_id'];
+				$totalPage = $admin_model->getTotalPage('user', 'group_id = '.$group_id);
 			}
 			
-			$group = $model->loadGroupInfo();
+			// calculate page numbers
+			if(($page > 2) && ($page < $totalPage -2)) {
+				$startPage = $page - 2;
+				$endPage = $page + 2;					
+			}
+			else if($page <= 2) {
+				$startPage = 1;
+				$endPage = $totalPage > 5 ? 5 : $totalPage;
+			}
+			else {
+				if ($totalPage - 4 == 0)
+					$startPage = 1;
+				else
+					$startPage = $totalPage - 4;
+				$endPage = $totalPage;
+			}
+				
+			$info = array('start' 	=> ($page*10 - 10),
+						  'end' 	=> $limit);
+						  
+			// select user query
+			if($group_id == 0) {
+				$users = $admin_model->getUsersByLimit($info);				
+			}
+			else {
+				$users = $admin_model->getUsersByLimit($info, $group_id);
+			}
+			
+			// $%@^@%
+			$group = $member_model->loadGroupInfo();
+			$currPage = $page;
 			
 			require './views/header-admin.php';
 			require './views/user-list.php';
@@ -90,11 +124,12 @@ Class Gns_admin extends Controller {
 	function edit_user_process() {
 		$model = $this->loadModel('admin_model');
 		
+		$id = $_POST['user_id'];
 		$email = $_POST['user_email'];
 		$name = $_POST['user_name'];
 		$group_id = $_POST['user_group_id'];
 		
-		$info = array($email, $name , $group_id, $email);
+		$info = array($email, $name , $group_id, $id);
 		
 		$res = $model->edit_user($info);
 		

@@ -42,8 +42,8 @@
 					<div class="basebox pd_10">
 						<ul class="ul_base">
 							<li class="fs_1_0_b">SIDEBAR</li>
-							<li>User</li>
-							<li>Group</li>
+							<li><a href="<?=URL?>/gns_admin/user_list">User</a></li>
+							<li><a href="<?=URL?>/gns_admin/group_list">Group</a></li>
 						</ul>
 					</div>
 					
