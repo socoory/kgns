@@ -34,7 +34,7 @@ Class Admin_model extends Model {
 	
 	function getUsersByLimit($limit, $group_id=null) {
 		$where 	= $group_id ? 'WHERE group_id = ?' : '';
-		$sql 	= 'SELECT * FROM user '.$where.' LIMIT '.$limit['start'].', '.$limit['end'];
+		$sql 	= 'SELECT * FROM user as U LEFT JOIN (SELECT * FROM groups) as G ON U.group_id=G.group_id'.$where.' LIMIT '.$limit['start'].', '.$limit['end'];
 		return $this->query_result($sql, ($group_id ? array($group_id) : null));
 	}
 	
@@ -46,6 +46,16 @@ Class Admin_model extends Model {
 	function editGroupInfo($info) {
 		$sql = 'UPDATE groups SET group_name = ? where group_id = ?';
 		return $this->query_exec($sql, $info);
+	}
+	
+	function deleteGroup($g_id) {
+		$sql = 'DELETE from groups where group_id = ?';
+		return $this->query_exec($sql, $g_id);
+	}
+	
+	function addGroup($g_name) {
+		$sql = 'INSERT INTO groups(group_name) value(?)';
+		return $this->query_exec($sql, array($g_name));
 	}
 	
 	function groupJoin() {
