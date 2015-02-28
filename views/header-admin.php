@@ -50,7 +50,7 @@
 					<div class="basebox pd_15">
 						<ul class="ul_base">
 							<li class="fs_1_0_b">SIDEBAR</li>
-							<li>Posts</li>
+							<li><a href="<?=URL?>/gns_admin/post_list">Posts</a></li>
 							<li>Files</li>
 							<li>Comments</li>
 						</ul>

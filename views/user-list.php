@@ -32,7 +32,7 @@
 				<td style="width:30%"><?=$user->email?></td>
 				<td style="width:15%"><?=$user->name?></td>
 				<td><?=date('Y-m-d', strtotime($user->regdate))?></td>
-				<td><?=$group[$user->group_id - 1]->group_name?></td>
+				<td><?=$user->group_name?></td>
 				<td><a class="btn btn-default btn-xs" href="<?=URL?>/gns_admin/edit_user/<?=$user->id?>" role="button">Edit</a>
 					<a class="btn btn-default btn-xs" href="<?=URL?>/gns_admin/delete_user/<?=$user->id?>" role="button">Delete</a>
 				</td>				

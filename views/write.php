@@ -297,7 +297,6 @@
 		},
 		
 		clearInput: function() {
-			console.log("asdf");
 			if($('#attach').length > 0 && $('#attach').val() == "") {
 				$('#attach').remove();
 			}
