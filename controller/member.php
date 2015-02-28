@@ -3,11 +3,12 @@
 Class Member extends Controller {
 	function __construct() {
 		parent::__construct();
-		$this->member_model = $this->loadModel('member_model');
+		$this->user_model = $this->loadModel('user_model');
 	}
 	
 	function signup() {
-		$group = $this->member_model->loadGroupInfo();
+		$groups_model = $this->loadModel('groups_model');
+		$group = $groups_model->getGroupInfo();
 		require './views/header-no-sidebar.php';
 		require './views/signup.php';
 		require './views/footer.php';	
@@ -20,7 +21,8 @@ Class Member extends Controller {
 	}
 	
 	function edit() {
-		$group = $this->member_model->loadGroupInfo();
+		$groups_model = $this->loadModel('groups_model');
+		$group = $groups_model->getGroupInfo();
 		require './views/header-no-sidebar.php';
 		require './views/edit.php';
 		require './views/footer.php';
@@ -33,10 +35,8 @@ Class Member extends Controller {
 		$password	 	= password_hash($_POST['user_password'], PASSWORD_BCRYPT, $options);
 		$group_id		= $_POST['user_group_id'];
 		$profile_image	= URL.'/images/no-profile.png';
-		
-		$info = array($email, $name, $password, $group_id, $profile_image);
-		
-		$res  = $this->member_model->regist($info);
+				
+		$res  = $this->user_model->createUser($email, $name, $password, $group_id, $profile_image);
 		
 		if($res) {
 			echo '<script>
@@ -56,8 +56,7 @@ Class Member extends Controller {
 		$email		= $_POST['user_email'];
 		$password	= $_POST['user_password'];
 		
-		$info = array($email);
-		$res = $this->member_model->loadUserInfo($info);
+		$res = $this->user_model->getUserByEmail($email);
 		
 		if($res == false) {
 			echo '<script>
@@ -85,8 +84,7 @@ Class Member extends Controller {
 	}
 	
 	function edit_process() {
-		$info = array($_SESSION['user_email']);
-		$temp_res = $this->member_model->loadUserInfo($info);
+		$temp_res = $this->user_model->getUserByEmail($_SESSION['user_email']);
 		$old_password = $_POST['user_old_password'];
 		
 		if(password_verify($old_password, $temp_res->password) == FALSE) {
@@ -138,8 +136,8 @@ Class Member extends Controller {
 			$group_id		= $_POST['user_group_id'];
 			$user_id 		= $_SESSION['user_id'];
 			$profile_image	= $uploadfile;
-			$info = array($email, $name, $password, $group_id, $profile_image, $user_id);
-			$res = $this->member_model->edit($info);
+			
+			$res = $this->user_model->updateUserInfo($email, $name, $password, $group_id, $profile_image, $user_id);
 			
 			if($res == TRUE) {
 				$_SESSION['user_id'] 			= $res->id;
