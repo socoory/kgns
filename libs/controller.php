@@ -27,5 +27,25 @@ class Controller
 	public function redirect($message, $controller, $action) {
 		echo '<script>alert("'.$message.'"); location.replace("'.URL.'/'.$controller.'/'.$action.'");</script>';
 	}
+
+	function mapSession() {
+		$object = new stdClass();
+		
+		foreach($_SESSION as $key => $val) {
+			$object->$key = $val;
+		}
+		
+		return $object;
+	}
+
+	function mapPost() {
+		$object = new stdClass();
+		
+		foreach($_POST as $key => $val) {
+			$object->$key = $val;
+		}
+		
+		return $object;
+	}
 }
 ?>

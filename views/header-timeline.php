@@ -1,3 +1,14 @@
+<?php
+
+	/**
+	 * feed header include header image
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 */
+
+?>
+
 <?php require 'common_header.php'; ?>
 	<div id="header">
 		<div class="pd_tb_10 container-fluid">

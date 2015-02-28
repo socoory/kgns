@@ -1,3 +1,13 @@
+<?php
+
+	/**
+	 * empty footer
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 */
+
+?>
 		
 			</div>
 		</div>

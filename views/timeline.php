@@ -1,3 +1,14 @@
+<?php
+
+	/**
+	 * feed list page
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 */
+
+?>
+
 <?php if (!defined("__KGNS__")) exit; ?>
 
 <?php foreach($posts as $post) { ?>

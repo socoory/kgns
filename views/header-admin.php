@@ -1,3 +1,14 @@
+<?php
+
+	/**
+	 * admin header
+	 * 
+	 * @author DoJong
+	 * @since 2015.02
+	 */
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>

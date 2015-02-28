@@ -1,3 +1,14 @@
+<?php
+
+	/**
+	 * common header markup
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 */
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
