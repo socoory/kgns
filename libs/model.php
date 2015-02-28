@@ -30,5 +30,23 @@ class Model
 		$query = $this->db->prepare($sql);
 		return $query->execute($array);
 	}
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * get last inserted id attr
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 * @return int
+	 */
+	function insertId() {
+		$sql = '
+					SELECT
+						LAST_INSERT_ID() as id
+				';
+				
+		return $this->query_row($sql, null)->id;
+	}
 }
 ?>

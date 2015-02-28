@@ -1,3 +1,14 @@
+<?php
+
+	/**
+	 * post write page
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 */
+
+?>
+
 <?php if (!defined("__KGNS__")) exit; ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js"></script>
