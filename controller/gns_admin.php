@@ -86,7 +86,7 @@ Class Gns_admin extends Controller {
 						  
 			// select user query
 			if($group_id == 0) {
-				$users = $admin_model->getUsersByLimit($info);				
+				$users = $admin_model->getUsersByLimit($info);
 			}
 			else {
 				$users = $admin_model->getUsersByLimit($info, $group_id);
@@ -253,6 +253,45 @@ Class Gns_admin extends Controller {
 			else {
 				$this->redirect('add fail', '/gns_admin/group_list', '');
 			}		
+		}
+		else {
+			$this->redirect('404 Not Found Error', 'gns_admin', '');
+		}
+	}
+	
+	function post_list($page=1) {
+		if(isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == TRUE) {
+			$timeline_model = $this->loadModel('timeline_model');
+			$admin_model = $this->loadModel('admin_model');
+			
+			$limit 			= 10;
+			$startPage 		= 1;
+			$endPage 		= 0;
+			
+			$totalPage = $admin_model->getTotalPage('post');
+			$res = $timeline_model->getPosts();
+			
+			if(($page > 2) && ($page < $totalPage -2)) {
+				$startPage = $page - 2;
+				$endPage = $page + 2;					
+			}
+			else if($page <= 2) {
+				$startPage = 1;
+				$endPage = $totalPage > 5 ? 5 : $totalPage;
+			}
+			else {
+				if ($totalPage - 4 == 0)
+					$startPage = 1;
+				else
+					$startPage = $totalPage - 4;
+				$endPage = $totalPage;
+			}
+			
+			//var_dump($res);return;
+				
+			require './views/header-admin.php';
+			require './views/admin-post-list.php';
+			require './views/footer.php';			
 		}
 		else {
 			$this->redirect('404 Not Found Error', 'gns_admin', '');

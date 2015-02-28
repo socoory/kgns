@@ -1,5 +1,5 @@
 <div class="basebox pd_lr_10 pd_tb_5">
-	<div>
+	<div class="pd_tb_10">
 		<table class="table table-hover">
 			<tr>
 				<th>Number</th>
