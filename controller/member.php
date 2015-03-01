@@ -68,7 +68,8 @@ Class Member extends Controller {
 		
 		$info = array($email);
 		$res = $this->member_model->loadUserInfo($info);
-		
+		$activity_id = $this->member_model->getLatestActivity()->activity_id;
+
 		if($res == false) {
 			echo '<script>
 			alert("Login Fail");
@@ -91,6 +92,7 @@ Class Member extends Controller {
 				$_SESSION['user_email'] 		= $res->email;
 				$_SESSION['user_group_id'] 		= $res->group_id;
 				$_SESSION['user_profile_image']	= $res->profile_image;
+				setCookie("latest_activity_id", $activity_id, 0, "/");
 				header('Location: '. URL);
 			}
 			else {
@@ -257,10 +259,42 @@ Class Member extends Controller {
 	
 	function logout() {
 		session_destroy();
+		setcookie('latest_activity_id');
 		echo '<script>
 			alert("Logout Success!");
 			location.replace("'.URL.'");
 			</script>';
+	}
+	
+	function activity($activity_id) {
+		$this->timeline_model = $this->loadModel('timeline_model');
+		$activity_info = array($_SESSION['user_id'], $activity_id);
+		$res = $this->timeline_model->getActivity($activity_info);
+		$activity_array = array();
+		
+		for($i = 0; $i < count($res); $i++)
+		{
+			$user_name = $this->member_model->getUserName(array($res[$i]->source_id));
+			if($res[$i]->activity_type == 1)
+				$message = "글을 작성하였습니다.";
+			else if($res[$i]->activity_type == 2)
+				$message = "댓글을 달았습니다.";
+			else if($res[$i]->activity_type == 3)
+				$message = "좋아요를 눌렀습니다.";
+			else if($res[$i]->activity_type == 4)
+				$message = "싫어요를 눌렀습니다.";
+			
+			array_push($activity_array, array("activity_id" => $res[$i]->activity_id, "activity_type" => $message,
+					   "user_name" => $user_name, "post_id" => $res[$i]->parent_id));	
+		}
+		
+		if($res){
+			$json = json_encode($activity_array, JSON_UNESCAPED_UNICODE);
+			echo $json;
+			}
+			else {
+			echo $activity_id;
+		}
 	}
 }
 ?>

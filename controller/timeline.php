@@ -13,24 +13,36 @@ class Timeline extends Controller {
 	//*******************************************************//
 	
 	public function index() {
-		$posts = $this->timeline_model->getPosts();		
+		if(!$this->isLogged())
+			header('Location: '.URL.'/member/login');
+		
+		$posts 	  = $this->timeline_model->getPosts();
+		
 		require './views/header-timeline.php';
 		require './views/timeline.php';
 		require './views/footer.php';
 	}
 	
 	function write() {
+		if(!$this->isLogged())
+			header('Location: '.URL.'/member/login');
+		
 		require './views/header-no-sidebar.php';
 		require './views/write.php';
 		require './views/footer-none.php';
 	}
 	
 	function read($post_id=null) {
+		if(!$this->isLogged())
+			header('Location: '.URL.'/member/login');
+		
 		if($post_id == null) {
 			return;
 		}
 		
 		$post = $this->timeline_model->getPost($post_id);
+		$attachImage = $this->timeline_model->getAttaches($post_id, 'i', 3);
+		$attachFile  = $this->timeline_model->getAttaches($post_id, 'f', 3);
 		
 		if(!$post) {
 			require './views/header-no-sidebar.php';
@@ -40,9 +52,11 @@ class Timeline extends Controller {
 		}
 		else {
 			$comments = $this->timeline_model->getComments($post_id);
+			$posts = $this->timeline_model->getPosts();
 			
 			require './views/header.php';
 			require './views/read.php';
+			require './views/timeline_other.php';
 			require './views/footer-none.php';
 			return;
 		}
@@ -57,16 +71,35 @@ class Timeline extends Controller {
 		if(!$this->isLogged())
 			header('Location: '.URL.'/member/login');
 			
-		$content = $_POST['content'];
+		$content = strip_tags($_POST['content']);
 		$sess    = $this->mapSession();
+		
 		if(!isset($sess->user_profile_image)) {
 			$sess->user_profile_image = URL.'/images/no-profile.png';
 		}
-		$info = array($content, $sess->user_id, $sess->user_name, $sess->user_profile_image, $sess->user_group_id);
-		
+
+		if(isset($_POST["lunch"])) {
+			$lunchList  = $_POST["lunch"];
+			$lunch = $lunchList[rand(0, count($lunchList) - 1)];
+			$content .= '<p class="text-center"><br />-------- 식사 메뉴  --------<br />후보 메뉴는<br />';
+			foreach($lunchList as $menu) {
+				$content .= '['.$menu.'] ';
+			}
+			$content .= '<br />였으나, 오늘의 메뉴는!!!<br /><br /><strong class="fs_2_4">'.$lunch.'</strong><br /><br />이 선택되었습니다.<br />맛있게 드세요 ^___^/</p>';
+		}
+
+		$info = array($content, $sess->user_id, $sess->user_name,
+					  $sess->user_profile_image, $sess->user_group_id);
 		$res = $this->timeline_model->post($info);
 		
 		if($res) {
+			if(isset($_POST["files"])) {
+				$id 		 = $this->timeline_model->insertId();
+				$attachModel = $this->loadModel("attach_model");
+				$attachList  = join(',', $_POST["files"]);
+				$result 	 = $attachModel->insertAttachPostId($attachList, $id);
+			}
+			
 			echo '<script>location.replace("'.URL.'/timeline");</script>';
 		}
 		else {
@@ -82,9 +115,28 @@ class Timeline extends Controller {
 		$post	= $this->mapPost();
 
 		$info = array($post->post_id, $post->content, $sess->user_id, $sess->user_name, $sess->user_profile_image);
-		
 		$res = $this->timeline_model->comment($info);
 		
+		$comment_id = $this->timeline_model->insertId();
+		$post_user_id = $this->timeline_model->getPostUserId(array($post->post_id));
+		if($_SESSION['user_id'] != $post_user_id)
+		{
+			$activity_info = array($post_user_id, 1, $sess->user_id, $comment_id);
+			$this->timeline_model->activity($activity_info);
+		}
+		
+		$comment_user_id = $this->timeline_model->getCommentUserId(array($post->post_id));
+		$activity_comment_target = array();
+		foreach ($comment_user_id as $value) {
+			if($_SESSION['user_id'] !== $value->user_id and $post_user_id !== $value->user_id) {
+				 array_push($activity_comment_target, '('.join(',', array($value->user_id, 2, $sess->user_id, $post->post_id, 'NOW()')).')');		
+			}			
+		}
+		if(count($activity_comment_target) !== 0)
+		{
+			$activity_comment_info = join(', ', $activity_comment_target);;
+			$this->timeline_model->activity_comment($activity_comment_info);
+		}
 		if($res) {
 			echo '<script>location.replace("'.URL.'/timeline/read/'.$post->post_id.'");</script>';
 		}

@@ -1,22 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
-	<title>KGNS</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-    <script src="<?=URL?>/js/common.js"></script>
-	<link href='http://fonts.googleapis.com/css?family=Raleway:400,600,800' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-	<link rel="stylesheet" href="<?=URL?>/css/common.css">
-    <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-	<!--[if lte IE 7]><script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE8.js"></script><![endif]-->
-	<?php if(!isset($_SESSION['is_logged'])) echo '<script>location.replace("'.URL.'/member/login")</script>'; ?>
-</head>
-<body>
+<?php require 'common_header.php' ?>
 	<div id="header">
-		<div class="pd_10 container-fluid">
+		<div class="pd_tb_10 container-fluid">
             <div class="row">
 			    <div class="col-md-2 text-left">
 			    	<a href="<?=URL?>"><span class="fs_1_8_b va_btm">KGNS</span></a>
@@ -46,9 +30,9 @@
 		</div>
 	</div>
 
-	<div class="container-fluid pd_tb_10">
+	<div class="container-fluid pd_15">
 			<div class="row">
-				<div id="sidebar" class="col-md-3 pd_10">
+				<div id="sidebar" class="col-md-3 pd_15">
 					<div class="basebox pd_lr_15 pd_tb_20">
 						<div class="user_info row">
 							<div class="col-xs-4">
@@ -70,18 +54,7 @@
 							<li>Dashboard</li>
 							<li>Settings</li>
 							<li>row_03</li>
-							<li>row_01</li>
-							<li>row_02</li>
-							<li>row_03</li>
 						</ul>
 					</div>
-					
-					<ul class="list-group">
-						<li class="list-group-item">ROW 01 menu MENU</li>
-						<li class="list-group-item">ROW 02 Test</li>
-						<li class="list-group-item">ROW 03</li>
-						<li class="list-group-item">ROW 04</li>
-						<li class="list-group-item">ROW 05</li>
-					</ul>
 				</div>
-				<div class="col-md-9 pd_10">
+				<div class="col-md-9 pd_15">

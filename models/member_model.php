@@ -23,7 +23,6 @@ class Member_model extends Model {
 	function getUserByGroup($group) {
 		$sql = 'SELECT * FROM user where group_id = ?';
 		return $this->query_result($sql, $group);
-		
 	}
 	
 	function loadGroupInfo() {
@@ -47,6 +46,14 @@ class Member_model extends Model {
 		$this->query_exec($sql1, $info);
 		$sql2 = 'SELECT * FROM user where email = ?';
 		return $this->query_row($sql2, array($info[0]));
+	}
+	
+	function getLatestActivity() {
+		return $this->query_row("SELECT MAX(activity_id) as activity_id from activity", null);
+	}
+	
+	function getUserName($id) {
+		return $this->query_row("SELECT name FROM user where id = ?", $id)->name;
 	}
 }
 ?>

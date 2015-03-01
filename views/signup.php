@@ -4,7 +4,7 @@
 		<form id="signup_form" action="<?=URL?>/member/signup_process" method="post" class="form-horizontal">
 			<div  class="form-group">
 				<label class="col-sm-4 control-label">E-Mail</label>
-				<div class="col-sm-8"><input type="text" name="user_email" class="form-control"></div>
+				<div class="col-sm-8"><input type="email" name="user_email" class="form-control"></div>
 			</div>
 			<div  class="form-group">
 				<label class="col-sm-4 control-label">Name</label>
