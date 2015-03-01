@@ -1,3 +1,14 @@
+<?php
+
+	/**
+	 * post write page
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 */
+
+?>
+
 <?php if (!defined("__KGNS__")) exit; ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore.js"></script>
@@ -169,7 +180,7 @@
 	    },
 	    
 	    render: function() {
-	    	$(this.el).append(this.template(this.model.toJSON()));
+	    	$(this.el).html(this.template(this.model.toJSON()));
 	    	return this.el;
 	    },
 	    
@@ -192,7 +203,7 @@
 	    },
 	    
 	    render: function() {
-	    	$(this.el).append(this.template(this.model.toJSON()));
+	    	$(this.el).html(this.template(this.model.toJSON()));
 	    	return this.el;
 	    },
 	    
@@ -218,7 +229,7 @@
 	    	$(this.el).addClass('lunch')
 	    	$(this.el).addClass('pd_lr_10')
 	    	$(this.el).addClass('text-center')
-	    	$(this.el).append(this.template(this.model.toJSON()));
+	    	$(this.el).html(this.template(this.model.toJSON()));
 	    	return this.el;
 	    },
 	    
@@ -228,7 +239,7 @@
 	});
 	
 	var LunchHolder = Backbone.View.extend({
-		tagname: "div",
+		tagName: "div",
 		template: _.template($("#lunch_holder").html()),
 		events: {
 			"click a#btn_addLunch": "addLunch",
@@ -297,7 +308,6 @@
 		},
 		
 		clearInput: function() {
-			console.log("asdf");
 			if($('#attach').length > 0 && $('#attach').val() == "") {
 				$('#attach').remove();
 			}

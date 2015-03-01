@@ -4,25 +4,53 @@ if (!defined("__KGNS__")) exit;
 class Timeline extends Controller {
 	function __construct() {
 		parent::__construct();
-		$this->timeline_model = $this->loadModel('timeline_model');
+		$this->post_model 		= $this->loadModel('post_model');
+		$this->comment_model 	= $this->loadModel('comment_model');
+		$this->attach_model 	= $this->loadModel('attach_model');
+		$this->activity_model 	= $this->loadModel('activity_model');
 	}
 	
 	
-	//*******************************************************//
-	//                         page                          //
-	//*******************************************************//
+	//*********************************************************************//
+	//                                page                                 //
+	//*********************************************************************//
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * list page
+	 * login based
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 */
 	public function index() {
 		if(!$this->isLogged())
 			header('Location: '.URL.'/member/login');
 		
-		$posts 	  = $this->timeline_model->getPosts();
+		$posts = $this->post_model->getPosts();
+		
+		// get comments and attached files
+		foreach($posts as $row) {
+			$row->comments 	  = $this->comment_model->getComments($row->post_id, 3);
+			$row->attachImage = $this->attach_model->getAttaches($row->post_id, 'i', 3);
+			$row->attachFile  = $this->attach_model->getAttaches($row->post_id, 'f', 3);
+		}
 		
 		require './views/header-timeline.php';
 		require './views/timeline.php';
 		require './views/footer.php';
 	}
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * write page
+	 * login based
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 */
 	function write() {
 		if(!$this->isLogged())
 			header('Location: '.URL.'/member/login');
@@ -31,18 +59,31 @@ class Timeline extends Controller {
 		require './views/write.php';
 		require './views/footer-none.php';
 	}
-	
-	function read($post_id=null) {
+
+	// ----------------------------------------------------------------------
+	/**
+	 * read page
+	 * login based
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 * @param int
+	 * 
+	 */
+	function read($postId=null) {
 		if(!$this->isLogged())
 			header('Location: '.URL.'/member/login');
 		
-		if($post_id == null) {
+		if($postId == null) {
 			return;
 		}
 		
-		$post = $this->timeline_model->getPost($post_id);
-		$attachImage = $this->timeline_model->getAttaches($post_id, 'i', 3);
-		$attachFile  = $this->timeline_model->getAttaches($post_id, 'f', 3);
+		$post = $this->post_model->getPost($postId);
+			
+		$comments 	 	= $this->comment_model->getComments($postId, 3);
+		$attachImage  	= $this->attach_model->getAttaches($postId, 'i');
+		$attachFile   	= $this->attach_model->getAttaches($postId, 'f');
 		
 		if(!$post) {
 			require './views/header-no-sidebar.php';
@@ -51,8 +92,8 @@ class Timeline extends Controller {
 			return;
 		}
 		else {
-			$comments = $this->timeline_model->getComments($post_id);
-			$posts = $this->timeline_model->getPosts();
+			$comments 	= $this->comment_model->getComments($postId);
+			$posts 		= $this->post_model->getPosts();
 			
 			require './views/header.php';
 			require './views/read.php';
@@ -63,41 +104,53 @@ class Timeline extends Controller {
 	}
 	
 	
-	//*******************************************************//
-	//                         post                          //
-	//*******************************************************//
+	//*********************************************************************//
+	//                                post                                 //
+	//*********************************************************************//
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * write a post
+	 * login based
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 */
 	function post() {
 		if(!$this->isLogged())
 			header('Location: '.URL.'/member/login');
 			
 		$content = strip_tags($_POST['content']);
 		$sess    = $this->mapSession();
-		
-		if(!isset($sess->user_profile_image)) {
-			$sess->user_profile_image = URL.'/images/no-profile.png';
-		}
 
+		// process lunch markup
 		if(isset($_POST["lunch"])) {
 			$lunchList  = $_POST["lunch"];
-			$lunch = $lunchList[rand(0, count($lunchList) - 1)];
-			$content .= '<p class="text-center"><br />-------- 식사 메뉴  --------<br />후보 메뉴는<br />';
+			$lunch 		= $lunchList[rand(0, count($lunchList) - 1)];
+			
+			$content .= '<p class="text-center"><br />
+						-------- 식사 메뉴  --------<br />
+						후보 메뉴는<br />';
+			
 			foreach($lunchList as $menu) {
 				$content .= '['.$menu.'] ';
 			}
-			$content .= '<br />였으나, 오늘의 메뉴는!!!<br /><br /><strong class="fs_2_4">'.$lunch.'</strong><br /><br />이 선택되었습니다.<br />맛있게 드세요 ^___^/</p>';
-		}
 
-		$info = array($content, $sess->user_id, $sess->user_name,
-					  $sess->user_profile_image, $sess->user_group_id);
-		$res = $this->timeline_model->post($info);
+			$content .= '<br />였으나, 오늘의 메뉴는!!!<br /><br />
+						<strong class="fs_2_4">'.$lunch.'</strong><br /><br />
+						이 선택되었습니다.<br />맛있게 드세요 ^___^/</p>';
+		}
+		
+		// create a post record
+		$res = $this->post_model->post($content, $_SESSION);
 		
 		if($res) {
+			// insert parent(post) id into attached files
 			if(isset($_POST["files"])) {
-				$id 		 = $this->timeline_model->insertId();
-				$attachModel = $this->loadModel("attach_model");
+				$id 		 = $this->post_model->insertId();
 				$attachList  = join(',', $_POST["files"]);
-				$result 	 = $attachModel->insertAttachPostId($attachList, $id);
+				$result 	 = $this->attach_model->insertAttachPostId($attachList, $id);
 			}
 			
 			echo '<script>location.replace("'.URL.'/timeline");</script>';
@@ -107,25 +160,35 @@ class Timeline extends Controller {
 		}
 	}
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * write a comment
+	 * login based
+	 * add activities
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 * @param int
+	 * 
+	 */
 	function comment() {
 		if(!$this->isLogged())
 			header('Location: '.URL.'/member/login');
 			
 		$sess   = $this->mapSession();
 		$post	= $this->mapPost();
-
-		$info = array($post->post_id, $post->content, $sess->user_id, $sess->user_name, $sess->user_profile_image);
-		$res = $this->timeline_model->comment($info);
 		
-		$comment_id = $this->timeline_model->insertId();
-		$post_user_id = $this->timeline_model->getPostUserId(array($post->post_id));
+		$res = $this->comment_model->comment($post->post_id, $post->content, $_SESSION);
+		$comment_id = $this->comment_model->insertId();
+		
+		$post_user_id = $this->post_model->getPost($post->post_id)->user_id;
 		if($_SESSION['user_id'] != $post_user_id)
 		{
-			$activity_info = array($post_user_id, 1, $sess->user_id, $comment_id);
-			$this->timeline_model->activity($activity_info);
+			$this->activity_model->activity($post_user_id, 2, $sess->user_id, $comment_id);
 		}
 		
-		$comment_user_id = $this->timeline_model->getCommentUserId(array($post->post_id));
+		$comment_user_id = $this->comment_model->getCommentUserId($post->post_id);
 		$activity_comment_target = array();
 		foreach ($comment_user_id as $value) {
 			if($_SESSION['user_id'] !== $value->user_id and $post_user_id !== $value->user_id) {
@@ -135,7 +198,7 @@ class Timeline extends Controller {
 		if(count($activity_comment_target) !== 0)
 		{
 			$activity_comment_info = join(', ', $activity_comment_target);;
-			$this->timeline_model->activity_comment($activity_comment_info);
+			$this->activity_model->activity_comment($activity_comment_info);
 		}
 		if($res) {
 			echo '<script>location.replace("'.URL.'/timeline/read/'.$post->post_id.'");</script>';
@@ -146,32 +209,21 @@ class Timeline extends Controller {
 	}
 	
 	
-	//*******************************************************//
-	//                        normal                         //
-	//*******************************************************//
+	//*********************************************************************//
+	//                                common                               //
+	//*********************************************************************//
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * return login status
+	 * 
+	 * @author Benimario
+	 * @since 2015.02
+	 * 
+	 * 
+	 */
 	function isLogged() {
 		return isset($_SESSION['is_logged']) ? $_SESSION['is_logged'] : FALSE ;
-	}
-
-	function mapSession() {
-		$object = new stdClass();
-		
-		foreach($_SESSION as $key => $val) {
-			$object->$key = $val;
-		}
-		
-		return $object;
-	}
-
-	function mapPost() {
-		$object = new stdClass();
-		
-		foreach($_POST as $key => $val) {
-			$object->$key = $val;
-		}
-		
-		return $object;
 	}
 }
 ?>

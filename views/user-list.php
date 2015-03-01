@@ -28,19 +28,35 @@
 			</tr>
 			<?php foreach($users as $user) { ?>
 			<tr>
-				<td><?=$user->id?></td>
-				<td><?=$user->email?></td>
-				<td><?=$user->name?></td>
-				<td><?=$user->regdate?></td>
-				<td><?=$user->group_id?></td>
-				<td><a class="btn btn-default btn-xs" href="./edit_user/<?=$user->id?>" role="button">Edit</a>
-					<a class="btn btn-default btn-xs" href="./delete_user/<?=$user->id?>" role="button">Delete</a>
-				</td>
-				
+				<td style="width:5%"><?=$user->id?></td>
+				<td style="width:30%"><?=$user->email?></td>
+				<td style="width:15%"><?=$user->name?></td>
+				<td><?=date('Y-m-d', strtotime($user->regdate))?></td>
+				<td><?=$user->group_name?></td>
+				<td><a class="btn btn-default btn-xs" href="<?=URL?>/gns_admin/edit_user/<?=$user->id?>" role="button">Edit</a>
+					<a class="btn btn-default btn-xs" href="<?=URL?>/gns_admin/delete_user/<?=$user->id?>" role="button">Delete</a>
+				</td>				
 			</tr>
 			<?php } ?>
 		</table>
 	</div>
+	<div class="bs-component center_wrap pd_tb_5">
+		<div class="center_innerWrap">
+	    	<div class="center_content btn-toolbar">
+	      		<div class="btn-group">
+	          		<a href="#" class="btn btn-default btn-sm">&laquo;</a>
+	        	</div>  
+		        <div class="btn-group">
+		        	<?php for($i = $startPage; $i <= $endPage; $i++) { ?>
+		          	<a href="<?=URL?>/gns_admin/user_list/<?=$i?>?gid=<?=$group_id?>" class="btn btn-default btn-sm <?=($currPage==$i)? "active" : ""?>"><?=$i?></a>
+		          	<?php } ?>
+		        </div>
+		        <div class="btn-group">
+		          	<a href="#" class="btn btn-default btn-sm">&raquo;</a>
+		        </div>
+	      	</div>
+		</div>
+     </div>
 </div>
 
 

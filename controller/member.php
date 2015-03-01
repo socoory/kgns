@@ -3,35 +3,79 @@
 Class Member extends Controller {
 	function __construct() {
 		parent::__construct();
-		$this->member_model = $this->loadModel('member_model');
+		$this->user_model = $this->loadModel('user_model');
+		$this->activity_model = $this->loadModel('activity_model');
 	}
 	
+	//*********************************************************************//
+	//                                page                                 //
+	//*********************************************************************//
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * signup page
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function signup() {
-		$group = $this->member_model->loadGroupInfo();
+		$groups_model = $this->loadModel('groups_model');
+		$group = $groups_model->getGroupInfo();
 		require './views/header-no-sidebar.php';
 		require './views/signup.php';
 		require './views/footer.php';	
 	}
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * login page
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function login() {
 		require './views/header-no-sidebar.php';
 		require './views/login.php';
 		require './views/footer.php';
 	}
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * edit information page
+	 * login based
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function edit() {
-		$group = $this->member_model->loadGroupInfo();
+		$groups_model = $this->loadModel('groups_model');
+		$group = $groups_model->getGroupInfo();
 		require './views/header-no-sidebar.php';
 		require './views/edit.php';
 		require './views/footer.php';
 	}
 	
+	//*********************************************************************//
+	//                              sign up                                //
+	//*********************************************************************//
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * Sign up 
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function signup_process() {
-		$options = array('cost' => 11);
+		$options 		= array('cost' => 11);
 		$email 			= $_POST['user_email'];
-		$email_info = array($email);
-		$checked_email = $this->member_model->loadEmailInfo($email_info);
-		if(!empty($checked_email)) {
+		$checked_email 	= $this->user_model->getUserByEmail($email); 
+		
+		if(!empty($checked_email)) {	//check overlapping e-mail
 			echo '<script>
 			alert("중복된 이메일이 있습니다.");
 			location.replace("'.URL.'/member/signup");
@@ -39,13 +83,11 @@ Class Member extends Controller {
 		}
 		else { 
 			$name 			= $_POST['user_name'];
-			$password	 	= password_hash($_POST['user_password'], PASSWORD_BCRYPT, $options);
+			$password	 	= password_hash($_POST['user_password'], PASSWORD_BCRYPT, $options);	//bcrypt for hashing password
 			$group_id		= $_POST['user_group_id'];
-			$profile_image	= URL.'/images/no-profile.png';
-			
-			$info = array($email, $name, $password, $group_id, $profile_image);
-			
-			$res  = $this->member_model->regist($info);
+			$profile_image	= 'images/no-profile.png';
+					
+			$res  = $this->user_model->createUser($email, $name, $password, $group_id, $profile_image);
 			
 			if($res) {
 				echo '<script>
@@ -62,14 +104,25 @@ Class Member extends Controller {
 		}
 	}
 	
+	//*********************************************************************//
+	//                                Login                                //
+	//*********************************************************************//
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * Login 
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function login_process() {
 		$email		= $_POST['user_email'];
 		$password	= $_POST['user_password'];
 		
-		$info = array($email);
-		$res = $this->member_model->loadUserInfo($info);
-		$activity_id = $this->member_model->getLatestActivity()->activity_id;
-
+		$res 		 = $this->user_model->getUserByEmail($email);
+		$activity_id = $this->activity_model->getLatestActivity($res->id)->activity_id;	//Get user's Latest Activity ID 
+		
 		if($res == false) {
 			echo '<script>
 			alert("Login Fail");
@@ -77,7 +130,7 @@ Class Member extends Controller {
 			</script>';
 		}
 		else {
-			if(password_verify($password, $res->password)) {
+			if(password_verify($password, $res->password)) {			//check password's verify
 				if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 				    $ip = $_SERVER['HTTP_CLIENT_IP'];
 				} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -85,7 +138,7 @@ Class Member extends Controller {
 				} else {
 				    $ip = $_SERVER['REMOTE_ADDR'];
 				}
-				$_SESSION['user_ip']			= $ip;
+				$_SESSION['user_ip']			= $ip;					
 				$_SESSION['is_logged'] 			= true;
 				$_SESSION['user_id'] 			= $res->id;
 				$_SESSION['user_name'] 			= $res->name;
@@ -104,55 +157,71 @@ Class Member extends Controller {
 		}
 	}
 	
+	//*********************************************************************//
+	//                                 Edit                                //
+	//*********************************************************************//
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * Edit user's information 
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function edit_process() {
-		$email_info = array($_POST['user_email']);
-		$checked_email = $this->member_model->loadEmailInfo($email_info);
 		
-		if((empty($checked_email) == FALSE) && ($_SESSION['user_email'] != $_POST['user_email'])) {
+		require 'libs/functions.php';
+		
+		$email_info = $_POST['user_email'];
+		$checked_email = $this->user_model->getUserByEmail($email_info);
+		
+		if((empty($checked_email) == FALSE) && ($_SESSION['user_email'] != $_POST['user_email'])) { //check overlapping e-mail
 			$this->redirect("중복된 이메일이 있습니다.", "member", "edit");
 			return;
 		}
 		else {
-			$temp_res = $this->member_model->loadUserInfo($email_info);
+			$temp_res = $this->user_model->getUserByEmail($email_info); 
 			$old_password = $_POST['user_old_password'];
 			
-			if(password_verify($old_password, $temp_res->password) == FALSE) {
+			if(password_verify($old_password, $temp_res->password) == FALSE) { //check old password
 				$this->redirect("이전 패스워드가 맞지 않습니다.", "member", "edit");
 				return;
 			}
 			else {
 				if(isset($_POST['check_delete_image'])) {
-					$uploadfile = URL.'/images/no-profile.png';
+					$uploadfile = URL.'images/no-profile.png';
 				}
 				else {
-					if($_FILES['user_profile_image']['name'] == null) {
+					$user_profile_image = $_FILES['user_profile_image'];
+					$fileType 			= explode('/', $user_profile_image['type']);
+					$fileName 			= time().$user_profile_image['name'];
+					if($user_profile_image['name'] == null) {
 						$uploadfile = $_SESSION['user_profile_image'];
 					}
 					else {
-						if(strpos($_FILES['user_profile_image']['type'], 'image') === false) {
+						if($fileType[0] != 'image') {	// check that file type is image
 							$this->redirect("이미지 파일이 아닙니다.", "member", "edit");
 							return;
 						}
 						else {
-							$uploaddir = './upload/profile/'.$_SESSION['user_id'].'/';				
+							$uploaddir = 'upload/profile/'.$_SESSION['user_id'];				
 							if(file_exists($uploaddir) == false) {
 								mkdir("$uploaddir", 0777); 
 							}
-							$uploadfile = $uploaddir . $_FILES['user_profile_image']['name'];
-							if(move_uploaded_file($_FILES['user_profile_image']['tmp_name'], $uploadfile))
+							$fileName = sha1($fileName).'.'.$fileType[1];
+							$uploadfile = $uploaddir.'/'.$fileName;
+							if(move_uploaded_file($user_profile_image['tmp_name'], $uploadfile))
 							{
-								$thumb = $uploaddir.'/thumb_'. $_FILES['user_profile_image']['name'];
-								
-								if($this->make_thumbnail($uploadfile, 100, 100, $thumb)) {
-									$uploadfile = URL.'/upload/profile/'.$_SESSION['user_id'].'/'.'thumb_'. $_FILES['user_profile_image']['name'];
-								}
-								else {
-									$thumb = $uploaddir;
-								}
+								$thumb = createThumb($uploaddir, $fileName, 100, 100);
+								$uploadfile = $thumb;
+								// var_dump($thumb);
+								// return;
 							}
 						}
 					}
 				}
+
 				$options 		= array('cost' => 11);
 				$email      	= $_POST['user_email'];
 				$name     		= $_POST['user_name'];
@@ -168,7 +237,7 @@ Class Member extends Controller {
 				$user_id 		= $_SESSION['user_id'];
 				$profile_image	= $uploadfile;
 				$info = array($email, $name, $password, $group_id, $profile_image, $user_id);
-				$res = $this->member_model->edit($info);
+				$res = $this->user_model->updateUserInfo($info);
 				
 				if($res == TRUE) {
 					$_SESSION['user_id'] 			= $res->id;
@@ -189,74 +258,18 @@ Class Member extends Controller {
 		}
 	}
 	
-	function make_thumbnail($source_file, $_width, $_height, $object_file) {
-	    list($img_width,$img_height, $type) = getimagesize($source_file);
-	    
-	    if ($type == 1) $img_sour = imagecreatefromgif($source_file);
-	    else if ($type == 2) $img_sour = imagecreatefromjpeg($source_file);
-	    else if ($type == 3) $img_sour = imagecreatefrompng($source_file);
-	    else if ($type==15) $img_sour = imagecreatefromwbmp($source_file);
-	    else return false;
-	    
-	    if ($img_width > $img_height) {
-	        $width = round($_height * $img_width / $img_height);
-	        $height = $_height;
-	    } 
-	    else {
-	        $width = $_width;
-	        $height = round($_width * $img_height / $img_width);
-	    }
-		
-	    if ($width < $_width) {
-	        $width = round(($height + $_width - $width)* $img_width / $img_height);
-	        $height = round(($width + $_width - $width)* $img_height / $img_width);
-	    } 
-	    else if ($height < $_height) {
-	        $height = round(($width + $_height - $height) * $img_height / $img_width);
-	        $width = round(($height + $_height - $height) * $img_width / $img_height);
-	    }
-	    $x_last = round(($width - $_width) / 2);
-	    $y_last = round(($height - $_height) / 2);
-	    
-	    if ($img_width < $_width || $img_height < $_height) {
-	        $img_last = imagecreatetruecolor($_width, $_height); 
-	        $x_last = round(($_width - $img_width) / 2);
-	        $y_last = round(($_height - $img_height) / 2);
-			imagecopy($img_last, $img_sour, $x_last, $y_last, 0, 0, $width,$height);
-	        imagedestroy($img_sour);
-	        $white = imagecolorallocate($img_last, 255, 255, 255);
-	        imagefill($img_last, 0, 0, $white);
-	    } 
-	    else {
-	        $img_dest = imagecreatetruecolor($width, $height); 
-	        imagecopyresampled($img_dest, $img_sour, 0, 0, 0, 0, $width, $height, $img_width, $img_height); 
-	        $img_last = imagecreatetruecolor($_width, $_height); 
-	        imagecopy($img_last, $img_dest, 0, 0, $x_last, $y_last, $width, $height);
-	        imagedestroy($img_dest);
-	    }
-	    if ($object_file) {
-	        if ($type == 1) imagegif($img_last, $object_file, 100);
-	        else if ($type == 2) imagejpeg($img_last, $object_file, 100);
-	        else if ($type == 3) {
-	        	imagealphablending($img_last, false);
-				imagesavealpha($img_last, true);	
-	        	imagepng($img_last, $object_file);
-			}
-	        else if ($type == 15) imagebmp($img_last, $object_file, 100);
-	    } else {
-	        if ($type == 1) imagegif($img_last);
-	        else if ($type == 2) imagejpeg($img_last);
-	        else if ($type == 3) {
-	        	imagealphablending($img_last, false);
-				imagesavealpha($img_last, true);	
-	        	imagepng($img_last);
-			}
-	        else if ($type == 15) imagebmp($img_last);
-	    }
-	    imagedestroy($img_last);
-	    return true;
-	}
+	//*********************************************************************//
+	//                                Logout                               //
+	//*********************************************************************//
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * Logout
+	 * 
+	 * @author waldo
+	 * @since 2015.02
+	 * 
+	 */
 	function logout() {
 		session_destroy();
 		setcookie('latest_activity_id');
@@ -265,16 +278,26 @@ Class Member extends Controller {
 			location.replace("'.URL.'");
 			</script>';
 	}
+	//*********************************************************************//
+	//                               Activity                              //
+	//*********************************************************************//
 	
+	// ----------------------------------------------------------------------
+	/**
+	 * Get Activity row
+	 * 
+	 * @author waldo
+	 * @since 2015.03
+	 * 
+	 * @param int
+	 * 
+	 */
 	function activity($activity_id) {
-		$this->timeline_model = $this->loadModel('timeline_model');
-		$activity_info = array($_SESSION['user_id'], $activity_id);
-		$res = $this->timeline_model->getActivity($activity_info);
+		$res = $this->activity_model->getActivity($_SESSION['user_id'], $activity_id);
 		$activity_array = array();
 		
-		for($i = 0; $i < count($res); $i++)
-		{
-			$user_name = $this->member_model->getUserName(array($res[$i]->source_id));
+		for($i = 0; $i < count($res); $i++) {
+			$user_name = $this->user_model->getUserById($res[$i]->source_id)->name;
 			if($res[$i]->activity_type == 1)
 				$message = "글을 작성하였습니다.";
 			else if($res[$i]->activity_type == 2)
@@ -288,10 +311,10 @@ Class Member extends Controller {
 					   "user_name" => $user_name, "post_id" => $res[$i]->parent_id));	
 		}
 		
-		if($res){
+		if($res) {
 			$json = json_encode($activity_array, JSON_UNESCAPED_UNICODE);
 			echo $json;
-			}
+		}
 			else {
 			echo $activity_id;
 		}
