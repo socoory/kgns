@@ -121,7 +121,6 @@ Class Member extends Controller {
 		$password	= $_POST['user_password'];
 		
 		$res 		 = $this->user_model->getUserByEmail($email);
-		$activity_id = $this->activity_model->getLatestActivity($res->id)->activity_id;	//Get user's Latest Activity ID 
 		
 		if($res == false) {
 			echo '<script>
@@ -130,6 +129,8 @@ Class Member extends Controller {
 			</script>';
 		}
 		else {
+			$activity_id = $this->activity_model->getLatestActivity($res->id)->activity_id;	//Get user's Latest Activity ID
+			
 			if(password_verify($password, $res->password)) {			//check password's verify
 				if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 				    $ip = $_SERVER['HTTP_CLIENT_IP'];
